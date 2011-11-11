@@ -3,21 +3,16 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.generic.runtimeTarget/JBoss v5.0"/>
+	<classpathentry kind="var" path="JBOSS_HOME/lib/endorsed/activation.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/lib/endorsed/jaxb-api.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/lib/endorsed/jbossws-native-jaxrpc.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/lib/endorsed/jbossws-native-jaxws-ext.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/lib/endorsed/jbossws-native-jaxws.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/lib/endorsed/jbossws-native-saaj.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/lib/endorsed/resolver.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/lib/endorsed/serializer.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/lib/endorsed/stax-api.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/lib/endorsed/xalan.jar"/>
+	<classpathentry kind="var" path="JBOSS_HOME/lib/endorsed/xercesImpl.jar"/>
 	<classpathentry kind="output" path="output/eclipse-classes"/>
-	<classpathentry kind="lib" path="/Users/gregoire_a_autric/Application/Jboss/jboss-5.1.0.GA/lib/endorsed/activation.jar"/>
-	<classpathentry kind="lib" path="/Users/gregoire_a_autric/Application/Jboss/jboss-5.1.0.GA/lib/endorsed/jaxb-api.jar"/>
-	<classpathentry kind="lib" path="/Users/gregoire_a_autric/Application/Jboss/jboss-5.1.0.GA/lib/endorsed/jbossws-native-jaxrpc.jar"/>
-	<classpathentry kind="lib" path="/Users/gregoire_a_autric/Application/Jboss/jboss-5.1.0.GA/lib/endorsed/jbossws-native-jaxws-ext.jar"/>
-	<classpathentry kind="lib" path="/Users/gregoire_a_autric/Application/Jboss/jboss-5.1.0.GA/lib/endorsed/jbossws-native-jaxws.jar"/>
-	<classpathentry kind="lib" path="/Users/gregoire_a_autric/Application/Jboss/jboss-5.1.0.GA/lib/endorsed/jbossws-native-saaj.jar"/>
-	<classpathentry kind="lib" path="/Users/gregoire_a_autric/Application/Jboss/jboss-5.1.0.GA/lib/endorsed/resolver.jar"/>
-	<classpathentry kind="lib" path="/Users/gregoire_a_autric/Application/Jboss/jboss-5.1.0.GA/lib/endorsed/serializer.jar"/>
-	<classpathentry kind="lib" path="/Users/gregoire_a_autric/Application/Jboss/jboss-5.1.0.GA/lib/endorsed/stax-api.jar"/>
-	<classpathentry kind="lib" path="/Users/gregoire_a_autric/Application/Jboss/jboss-5.1.0.GA/lib/endorsed/xalan.jar"/>
-	<classpathentry kind="lib" path="/Users/gregoire_a_autric/Application/Jboss/jboss-5.1.0.GA/lib/endorsed/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="/Users/gregoire_a_autric/Application/Jboss/jboss-5.1.0.GA/server/all/deploy/juddi-service.sar/juddi-saaj.jar"/>
-	<classpathentry kind="lib" path="/Users/gregoire_a_autric/Application/Jboss/jboss-5.1.0.GA/server/all/deploy/juddi-service.sar/juddi-service.jar"/>
-	<classpathentry kind="lib" path="/Users/gregoire_a_autric/Application/Jboss/jboss-5.1.0.GA/server/all/deploy/juddi-service.sar/juddi.jar"/>
-	<classpathentry kind="lib" path="/Users/gregoire_a_autric/Application/Jboss/jboss-5.1.0.GA/server/all/deploy/juddi-service.sar/scout.jar"/>
-	
 </classpath>
