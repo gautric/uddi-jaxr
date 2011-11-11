@@ -1,0 +1,230 @@
+<project name="uddi-jaxr" default="all-run" basedir=".">
+
+  <property file="example.properties" />
+
+  <property name="src.dir" value="src" />
+  <property name="lib.dir" value="lib" />
+  <property name="output.dir" value="output" />
+  <property name="classes.dir" value="${output.dir}/classes" />
+  <property name="conf.dir" value="conf" />
+  <property name="generated.dir" value="${output.dir}/generated" />
+  <property name="generated.classes.dir" value="${generated.dir}/classes" />
+
+  <!-- all-clean -->
+  <target name="all-clean">
+    <delete includeEmptyDirs="true" quiet="true">
+      <fileset dir="${output.dir}" />
+      <fileset dir="${jboss.home}/server/${jboss.conf}/deploy">
+        <include name="example.war" />
+        <include name="example2.war" />
+      </fileset>
+    </delete>
+  </target>
+
+  <!-- all-run -->
+  <target name="all-run" depends="all-clean">
+    <antcall target="ws-deploy" />
+    <antcall target="publisher-run" />
+    <antcall target="client-run" />
+  </target>
+
+
+
+
+  <!-- ==============================
+		|	Publisher tasks
+		 ============================== -->
+
+  <!-- env -->
+  <target name="publisher-env">
+    <path id="cp">
+      <pathelement location="${classes.dir}" />
+      <fileset dir="${jboss.home}/client">
+        <include name="*.jar" />
+      </fileset>
+      <fileset dir="${jboss.home}/server/${jboss.conf}/lib">
+        <include name="*.jar" />
+      </fileset>
+      <fileset dir="${jboss.home}/server/${jboss.conf}/deploy/juddi-service.sar">
+        <include name="juddi*.jar" />
+      </fileset>
+    </path>
+  </target>
+
+  <!-- clean -->
+  <target name="publisher-clean">
+    <delete includeEmptyDirs="true" quiet="true">
+      <fileset dir="${output.dir}">
+        <include name="**/publisher/**/*" />
+      </fileset>
+    </delete>
+  </target>
+
+  <!-- compile -->
+  <target name="publisher-compile" depends="publisher-env,publisher-clean">
+
+    <mkdir dir="${output.dir}" />
+    <mkdir dir="${classes.dir}" />
+
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="on" deprecation="off" optimize="off">
+      <classpath refid="cp" />
+      <include name="**/publisher/**/*" />
+    </javac>
+
+    <copy file="${src.dir}/log4j.properties" todir="${classes.dir}" />
+
+  </target>
+
+
+  <!-- run -->
+  <target name="publisher-run" depends="publisher-compile">
+    <echo>Publish the example ExampleService</echo>
+    <java fork="yes" classname="org.jboss.example.uddi.publisher.SimpleWSDLPublisher" jvmargs="-Djava.endorsed.dirs=${jboss.home}/lib/endorsed">
+      <arg line="${uddi.inquiryURL} ${uddi.publishURL} ${uddi.userid} ${uddi.password} ${ws.wsdlURL} ${uddi.businessEntityName}" />
+      <classpath refid="cp" />
+    </java>
+    <!--	    -->
+    <echo>Publish the example2 ExampleService</echo>
+    <java fork="yes" classname="org.jboss.example.uddi.publisher.SimpleWSDLPublisher" jvmargs="-Djava.endorsed.dirs=${jboss.home}/lib/endorsed">
+      <arg line="${uddi.inquiryURL} ${uddi.publishURL} ${uddi.userid} ${uddi.password} ${ws.wsdlURL2} ${uddi.businessEntityName}" />
+      <classpath refid="cp" />
+    </java>
+  </target>
+
+
+
+
+
+  <!-- ==============================
+       |   Web Service tasks
+       ============================== -->
+
+  <target name="ws-env">
+    <path id="ws.cp">
+      <pathelement location="${classes.dir}" />
+      <fileset dir="${jboss.home}/client">
+        <include name="jbossws*client.jar" />
+        <include name="jbossretro-rt.jar" />
+        <include name="jboss-xml-binding.jar" />
+        <include name="activation.jar" />
+        <include name="mail.jar" />
+        <include name="jboss-backport-concurrent.jar" />
+        <include name="jbossall-client.jar" />
+      </fileset>
+      <fileset dir="${jboss.home}/lib">
+        <include name="endorsed/xalan.jar" />
+      </fileset>
+    </path>
+
+    <mkdir dir="${classes.dir}" />
+    <mkdir dir="${generated.dir}" />
+    <mkdir dir="${generated.classes.dir}" />
+  </target>
+
+  <target name="ws-clean">
+    <delete includeEmptyDirs="true" quiet="true">
+      <fileset dir="${generated.dir}" />
+    </delete>
+  </target>
+
+  <!-- 
+    does all ws tasks and deploy
+  -->
+  <target name="ws-deploy" depends="ws-clean,ws-env">
+
+    <!-- compile -->
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" includes="**/ws/*" debug="on" deprecation="off" optimize="off">
+      <classpath refid="ws.cp" />
+    </javac>
+
+    <taskdef name="wstools" classname="org.jboss.ws.tools.ant.wstools" classpathref="ws.cp" />
+
+    <wstools dest="${generated.dir}" config="${conf.dir}/wstools-config.xml" />
+
+    <!-- war -->
+    <war warfile="${output.dir}/example.war" webxml="${conf.dir}/web.xml">
+      <webinf dir="${conf.dir}" includes="webservices.xml" />
+      <webinf dir="${generated.dir}">
+        <include name="wsdl/*" />
+        <include name="jaxrpc-mapping.xml" />
+        <include name="webservices.xml" />
+      </webinf>
+      <classes dir="${classes.dir}" includes="**/ws/*.class" defaultexcludes="no" />
+    </war>
+
+    <!-- deploy -->
+    <copy todir="${jboss.home}/server/${jboss.conf}/deploy" overwrite="true">
+      <fileset dir="${output.dir}">
+        <include name="example.war" />
+      </fileset>
+    </copy>
+
+    <!-- deploy 2 -->
+    <copy tofile="${jboss.home}/server/${jboss.conf}/deploy/example2.war" overwrite="true">
+      <fileset dir="${output.dir}">
+        <include name="example.war" />
+      </fileset>
+    </copy>
+
+    <!-- gives time to JBossAS to complete the deployment -->
+    <sleep seconds="10" />
+  </target>
+
+
+
+  <!-- ==============================
+		|	WS Client with UDDI Requests 
+		|   to find accesPoints
+		 ============================== -->
+
+  <!-- env -->
+  <target name="client-env">
+    <path id="cp">
+      <pathelement location="${classes.dir}" />
+      <fileset dir="${jboss.home}/client">
+        <include name="*.jar" />
+      </fileset>
+      <fileset dir="${jboss.home}/lib">
+        <include name="endorsed/xalan.jar" />
+      </fileset>
+      <fileset dir="${jboss.home}/server/${jboss.conf}/deploy/juddi-service.sar">
+        <include name="juddi*.jar" />
+      </fileset>
+    </path>
+  </target>
+
+  <!-- clean -->
+  <target name="client-clean">
+    <delete includeEmptyDirs="true" quiet="true">
+      <fileset dir="${output.dir}">
+        <include name="**/Client.class" />
+      </fileset>
+    </delete>
+  </target>
+
+  <!-- compile -->
+  <target name="client-compile" depends="client-env,client-clean">
+
+    <mkdir dir="${output.dir}" />
+    <mkdir dir="${classes.dir}" />
+
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="on" deprecation="off" optimize="off">
+      <classpath refid="cp" />
+    </javac>
+    <copy file="${src.dir}/log4j.properties" todir="${classes.dir}" />
+  </target>
+
+
+  <!-- run -->
+  <target name="client-run" depends="client-compile">
+    <java fork="yes" classname="org.jboss.example.Client" jvmargs="-Djava.endorsed.dirs=${jboss.home}/lib/endorsed">
+      <arg line="${uddi.inquiryURL} ${uddi.publishURL} ${uddi.businessEntityName} ExampleService" />
+      <classpath refid="cp" />
+    </java>
+  </target>
+
+
+
+
+</project>
+
